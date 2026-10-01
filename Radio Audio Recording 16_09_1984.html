@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Radio Audio Recording 16/09/1984</title>
+<style>
+:root{
+  --bg:#0d1214;
+  --panel:#141b1e;
+  --edge:#243035;
+  --dim:#6f8088;
+  --joseph:#8fd3ff;
+  --clifton:#6fe08a;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px);}
+*,*::before,*::after{box-sizing:inherit;}
+body{
+  margin:0;min-height:100%;background:var(--bg);color:var(--dim);
+  font-family:"Courier New",Courier,"Liberation Mono",monospace;
+  font-size:17px;line-height:1.55;
+  display:flex;justify-content:center;
+}
+main{width:100%;max-width:640px;padding:28px 18px 64px;}
+.head{
+  color:var(--dim);border-bottom:1px solid var(--edge);
+  padding-bottom:14px;margin-bottom:22px;
+}
+.log{display:flex;flex-direction:column;gap:14px;}
+.msg{
+  max-width:88%;padding:10px 14px;border:1px solid var(--edge);
+  background:var(--panel);border-radius:4px;
+  opacity:0;transform:translateY(6px);
+  transition:opacity .45s ease,transform .45s ease;
+}
+.msg.show{opacity:1;transform:none;}
+.joseph{align-self:flex-start;color:var(--joseph);border-left:3px solid var(--joseph);}
+.clifton{align-self:flex-end;color:var(--clifton);border-right:3px solid var(--clifton);}
+.static{
+  align-self:center;color:var(--dim);font-style:italic;padding:6px 0;
+  opacity:0;transition:opacity .45s ease;
+}
+.static.show{opacity:1;}
+.static.show.live{animation:flick .35s steps(2) infinite;}
+@keyframes flick{50%{opacity:.35;}}
+.again{
+  margin-top:26px;font:inherit;color:var(--dim);background:none;
+  border:1px solid var(--edge);padding:8px 14px;border-radius:4px;cursor:pointer;
+  display:none;
+}
+.again.show{display:inline-block;}
+.again:hover{color:var(--joseph);border-color:var(--joseph);}
+.again:focus-visible{outline:2px solid var(--joseph);outline-offset:2px;}
+@media (prefers-reduced-motion:reduce){
+  .msg,.static{transition:none;transform:none;}
+  .static.show.live{animation:none;}
+}
+</style>
+</head>
+<body>
+<main>
+  <div class="head" id="head">[Commencing Radio Audio Recording;16/09/1984]</div>
+  <div class="log" id="log" aria-live="polite"></div>
+  <button class="again" id="again" type="button">Play again</button>
+</main>
+<script>
+var script=[
+ {w:"j",t:"You there?"},
+ {w:"c",t:"Clifton here. Just finishing the east gate latch, sir. Over."},
+ {w:"j",t:"Good timing. Don't put your tools away yet, I need you to swing by the ranger station before you clock out. Over."},
+ {w:"c",t:"Is something wrong with the generator again? Over."},
+ {w:"j",t:"Nothing like that. Just come by. Over."},
+ {w:"s",t:"(static, a few seconds)",pause:4500},
+ {w:"c",t:"Okay, I'm here. Sir? There's a... is that a cake?"},
+ {w:"j",t:"(laughing, close to the mic) Tomorrow's the big day, isn't it? Figured I'd get ahead of the crowd. Nobody else in this place remembers a birthday unless it's printed on a form."},
+ {w:"c",t:"You didn't have to do that."},
+ {w:"j",t:"Of course I did. Eleven years of fixing everything that breaks around here, the least I can do is a slice of chocolate cake. My wife helped, so it's edible, I promise.I\u2019m sorry I couldn\u2019t be there myself HR had me visit the medicine wing."},
+ {w:"c",t:"(pause) Thank you sir."},
+ {w:"j",t:"Come on, I told you you don't need to call me that, just call me Joseph."},
+ {w:"c",t:"Right. Sorry. Old habit. Thank you, Joseph."},
+ {w:"j",t:"That's better. Now take it home before the others see it and I have to share. And go easy tomorrow, alright? You've earned a quiet day."},
+ {w:"c",t:"I'll try. Goodnight, Joseph."},
+ {w:"j",t:"Goodnight, Clifton."}
+];
+var log=document.getElementById("log"),again=document.getElementById("again"),timers=[];
+function wait(len){return Math.min(3200,1100+len*32);}
+function play(){
+  timers.forEach(clearTimeout);timers=[];
+  log.innerHTML="";again.classList.remove("show");
+  var at=900;
+  script.forEach(function(m){
+    timers.push(setTimeout(function(){
+      var el=document.createElement("div");
+      el.className=m.w==="j"?"msg joseph":m.w==="c"?"msg clifton":"static";
+      el.textContent=m.t;
+      log.appendChild(el);
+      void el.offsetWidth;
+      el.classList.add("show");
+      if(m.w==="s"){
+        el.classList.add("live");
+        timers.push(setTimeout(function(){el.classList.remove("live");},m.pause-300));
+      }
+      window.scrollTo({top:document.body.scrollHeight,behavior:"smooth"});
+    },at));
+    at+=m.pause||wait(m.t.length);
+  });
+  timers.push(setTimeout(function(){again.classList.add("show");},at));
+}
+again.addEventListener("click",play);
+play();
+</script>
+</body>
+</html>
